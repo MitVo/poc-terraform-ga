@@ -1,0 +1,13 @@
+name: Execute terraform workflow plan
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+jobs:
+  execute-terraform-workflow-plan:
+    uses: ./.github/workflows/terraform-plan.yml
+    with:
+      project_id: "terraform-gh"

@@ -1,0 +1,10 @@
+name: Execute terraform workflow apply
+on:
+  push:
+    branches:
+      - main
+jobs:
+  execute-terraform-workflow-apply:
+    uses: ./.github/workflows/terraform-apply.yml
+    with:
+      project_id: "terraform-gh"

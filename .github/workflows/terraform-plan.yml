@@ -1,0 +1,57 @@
+name: Execute Terraform Plan to GCP
+on:
+  workflow_call:
+    inputs:
+      project_id:
+        required: true
+        type: string
+    outputs:
+      output_plan:
+        description: The output of the Terraform plan
+        value: ${{ jobs.terraform.outputs.output_plan }}
+      output_plan_error:
+        description: The error message if the plan fails
+        value: ${{ jobs.terraform.outputs.output_plan_error }}
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env: 
+      GOOGLE_PROJECT_ID: ${{ inputs.project_id }}
+      GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Validate Terraform configuration
+        run: terraform validate
+        
+      - name: Plan Terraform changes
+        id: plan
+        run: |
+          terraform plan -output='tfplan-${{ inputs.project_id }}-${{ github.run_id }}'
+
+      - name: Output terraform plan
+        if: steps.plan.outputs.stdout != ''
+        id: output_plan
+        run: echo "output_plan='${{ steps.plan.outputs.stdout }}'" >> $GITHUB_OUTPUT
+        shell: bash 
+
+      - name: Output terraform plan error
+        if: steps.plan.outputs.stderr != ''
+        id: output_plan_error
+        run: echo "output_plan_error='${{ steps.plan.outputs.stderr }}'" >> $GITHUB_OUTPUT
+        shell: bash  
+
+      - name: Upload Terraform plan output artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'terraform-plan-${{ inputs.project_id }}-${{ github.run_id }}'
+          path: tfplan-${{ inputs.project_id }}  
