@@ -47,8 +47,7 @@ jobs:
         
       - name: Plan Terraform changes
         id: plan
-        run: |
-          terraform plan -output='tfplan-${{ inputs.project_id }}-${{ github.run_id }}'
+        run: terraform plan -output='tfplan-${{ inputs.project_id }}-${{ github.run_id }}'
 
       - name: Output terraform plan
         if: steps.plan.outputs.stdout != ''

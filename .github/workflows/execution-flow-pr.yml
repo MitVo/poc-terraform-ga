@@ -6,6 +6,7 @@ on:
     types:
       - opened
       - synchronize
+  workflow_dispatch:    
 jobs:
   execute-terraform-workflow-plan:
     uses: ./.github/workflows/terraform-plan.yml
