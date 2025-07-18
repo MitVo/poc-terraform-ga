@@ -20,6 +20,9 @@ jobs:
     env: 
       GOOGLE_PROJECT_ID: ${{ inputs.project_id }}
       GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+    outputs:
+      output_plan: ${{ steps.output_plan.outputs.output_plan }}
+      output_plan_error: ${{ steps.output_plan_error.outputs.output_plan_error }}  
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -29,7 +32,6 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
-        continue-on-error: true
 
       - name: Validate Terraform configuration
         run: terraform validate

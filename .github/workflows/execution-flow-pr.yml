@@ -6,8 +6,11 @@ on:
     types:
       - opened
       - synchronize
+
 jobs:
   execute-terraform-workflow-plan:
     uses: ./.github/workflows/terraform-plan.yml
     with:
       project_id: "terraform-gh"
+    secrets:
+      GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}

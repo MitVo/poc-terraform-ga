@@ -6,5 +6,7 @@ on:
 jobs:
   execute-terraform-workflow-apply:
     uses: ./.github/workflows/terraform-apply.yml
+    secrets:
+      GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
     with:
       project_id: "terraform-gh"
