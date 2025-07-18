@@ -35,6 +35,9 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
+        env:
+          GOOGLE_PROJECT_ID: ${{ inputs.project_id }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
 
       - name: Validate Terraform configuration
         run: terraform validate
@@ -55,6 +58,9 @@ jobs:
         id: output_plan_error
         run: echo "output_plan_error='${{ steps.plan.outputs.stderr }}'" >> $GITHUB_OUTPUT
         shell: bash  
+        env:
+          GOOGLE_PROJECT_ID: ${{ inputs.project_id }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
 
       - name: Upload Terraform plan output artifact
         uses: actions/upload-artifact@v4
