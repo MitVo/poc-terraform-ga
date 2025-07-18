@@ -30,11 +30,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Write GCP credentials to file
+        run: echo '${{ secrets.GCP_CREDENTIALS }}' > ${{ github.workspace }}/gcp-key.json
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
-
-      - name: Write GCP credentials to file
-        run: echo "${{ secrets.GCP_CREDENTIALS }}" > ${{ github.workspace }}/gcp-key.json
 
       - name: Terraform Init
         run: terraform init
