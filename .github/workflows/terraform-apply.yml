@@ -29,6 +29,7 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
+        continue-on-error: true
 
       - name: Validate Terraform configuration
         run: terraform validate
