@@ -12,6 +12,9 @@ on:
       output_plan_error:
         description: The error message if the plan fails
         value: ${{ jobs.terraform.outputs.output_plan_error }}
+    secrets:
+      GCP_CREDENTIALS:
+        required: true    
 jobs:
   terraform:
     runs-on: ubuntu-latest
@@ -27,19 +30,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Write GCP credentials to file
+        run: echo '${{ secrets.GCP_CREDENTIALS }}' > ${{ github.workspace }}/gcp-key.json
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         run: terraform init
+        env:
+          GOOGLE_PROJECT_ID: ${{ inputs.project_id }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
 
       - name: Validate Terraform configuration
         run: terraform validate
         
       - name: Plan Terraform changes
         id: plan
-        run: |
-          terraform plan -output='tfplan-${{ inputs.project_id }}-${{ github.run_id }}'
+        run: terraform plan -output='tfplan-${{ inputs.project_id }}-${{ github.run_id }}'
 
       - name: Output terraform plan
         if: steps.plan.outputs.stdout != ''
@@ -52,6 +60,9 @@ jobs:
         id: output_plan_error
         run: echo "output_plan_error='${{ steps.plan.outputs.stderr }}'" >> $GITHUB_OUTPUT
         shell: bash  
+        env:
+          GOOGLE_PROJECT_ID: ${{ inputs.project_id }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
 
       - name: Upload Terraform plan output artifact
         uses: actions/upload-artifact@v4
