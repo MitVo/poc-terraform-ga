@@ -12,6 +12,9 @@ on:
       output_plan_error:
         description: The error message if the plan fails
         value: ${{ jobs.terraform.outputs.output_plan_error }}
+    secrets:
+      GCP_CREDENTIALS:
+        required: true     
 jobs:
   terraform:
     runs-on: ubuntu-latest
