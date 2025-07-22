@@ -36,11 +36,15 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
 
+      - name: Configure GCP credentials
+        run: |
+          mkdir -p terraform
+          echo "GOOGLE_APPLICATION_CREDENTIALS=terraform/gcp-key.json"
+          gcloud auth github-actions-terraform@terraform-gh.iam.gserviceaccount.com --key-file=terraform/gcp-key.json  
+          gcloud config set project ${{ inputs.project_id }}
+
       - name: Terraform Init
         run: terraform init
-        env:
-          GOOGLE_PROJECT_ID: ${{ inputs.project_id }}
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/gcp-key.json
 
       - name: Validate Terraform configuration
         run: terraform validate

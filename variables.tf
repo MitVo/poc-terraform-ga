@@ -4,7 +4,7 @@ variable "project_id" {
 }
 
 variable "region" {
-  type  = string
+  type        = string
   description = "Region to create all resources in "
-  default   = "us-east1"
+  default     = "us-east1"
 }
