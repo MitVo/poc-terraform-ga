@@ -46,7 +46,7 @@ jobs:
         
       - name: Plan Terraform changes
         id: plan
-        run: terraform plan -out='tfplan-${{ inputs.project_id }}-${{ github.run_id }}'
+        run: terraform plan -out='tfplan-${{ inputs.project_id }}-${{ github.run_id }}.out' > tfplan-${{ inputs.project_id }}-${{ github.run_id }}.txt
 
       - name: Output terraform plan
         if: steps.plan.outputs.stdout != ''
@@ -72,5 +72,5 @@ jobs:
       - name: Upload Terraform plan output artifact
         uses: actions/upload-artifact@v4
         with:
-          name: 'tfplan-${{ inputs.project_id }}-${{ github.run_id }}'
-          path: tfplan-${{ inputs.project_id }}-${{ github.run_id }}  
+          name: 'tfplan-${{ inputs.project_id }}-${{ github.run_id }}.txt'
+          path: tfplan-${{ inputs.project_id }}-${{ github.run_id }}.txt  
