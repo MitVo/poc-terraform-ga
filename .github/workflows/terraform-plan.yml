@@ -20,9 +20,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    env: 
-      GOOGLE_PROJECT_ID: ${{ inputs.project_id }}
-      GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
     outputs:
       output_plan: ${{ steps.output_plan.outputs.output_plan }}
       output_plan_error: ${{ steps.output_plan_error.outputs.output_plan_error }}   
@@ -37,6 +34,7 @@ jobs:
         run: |
           mkdir -p terraform
           echo '${{ secrets.GCP_CREDENTIALS }}' > terraform/gcp-key.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS=terraform/gcp-key.json" >> $GITHUB_ENV
           gcloud auth activate-service-account --key-file=terraform/gcp-key.json  
           gcloud config set project ${{ inputs.project_id }}
 
