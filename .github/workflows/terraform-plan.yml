@@ -40,7 +40,7 @@ jobs:
         run: |
           mkdir -p terraform
           echo "${{ secrets.GCP_CREDENTIALS }}" > terraform/gcp-key.json
-          gcloud auth github-actions-terraform@terraform-gh.iam.gserviceaccount.com --key-file=terraform/gcp-key.json  
+          gcloud auth activate-service-account --key-file=terraform/gcp-key.json  
           gcloud config set project ${{ inputs.project_id }}
 
       - name: Terraform Init
