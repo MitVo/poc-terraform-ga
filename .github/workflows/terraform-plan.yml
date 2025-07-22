@@ -51,14 +51,20 @@ jobs:
       - name: Output terraform plan
         if: steps.plan.outputs.stdout != ''
         id: output_plan
-        run: echo "output_plan='${{ steps.plan.outputs.stdout }}'" >> $GITHUB_OUTPUT
+        run: |
+          echo "output_plan<<EOF" >> $GITHUB_OUTPUT
+          echo "${{ steps.plan.outputs.stdout }}" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
         shell: bash 
 
       - name: Output terraform plan error
         if: steps.plan.outputs.stderr != ''
         id: output_plan_error
-        run: echo "output_plan_error='${{ steps.plan.outputs.stderr }}'" >> $GITHUB_OUTPUT
-        shell: bash  
+        run: |
+          echo "output_plan_error<<EOF" >> $GITHUB_OUTPUT
+          echo "${{ steps.plan.outputs.stderr }}" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+        shell: bash   
         env:
           GOOGLE_PROJECT_ID: ${{ inputs.project_id }}
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
