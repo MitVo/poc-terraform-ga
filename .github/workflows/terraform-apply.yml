@@ -1,37 +1,32 @@
-name: Deploy to GCP
+name: Execute Terraform Apply to GCP
 on:
   workflow_call:
     inputs:
       project_id:
         required: true
         type: string
-    outputs:
-      output_plan:
-        description: The output of the Terraform plan
-        value: ${{ jobs.terraform.outputs.output_plan }}
-      output_plan_error:
-        description: The error message if the plan fails
-        value: ${{ jobs.terraform.outputs.output_plan_error }}
     secrets:
       GCP_CREDENTIALS:
-        required: true     
+        required: true    
 jobs:
-  terraform:
+  exec-terraform-apply:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    env: 
-      GOOGLE_PROJECT_ID: ${{ inputs.project_id }}
-      GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
-    outputs:
-      output_plan: ${{ steps.output_plan.outputs.output_plan }}
-      output_plan_error: ${{ steps.output_plan_error.outputs.output_plan_error }}  
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3  
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Configure GCP credentials
+        run: |
+          mkdir -p terraform
+          echo '${{ secrets.GCP_CREDENTIALS }}' > ${{ github.workspace }}/gcp-key.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/gcp-key.json" >> $GITHUB_ENV
+          gcloud auth activate-service-account --key-file=${{ github.workspace }}/gcp-key.json  
+          gcloud config set project ${{ inputs.project_id }}
 
       - name: Terraform Init
         run: terraform init
@@ -41,23 +36,16 @@ jobs:
         
       - name: Plan Terraform changes
         id: plan
-        run: |
-          terraform plan -output='tfplan-${{ inputs.project_id }}-${{ github.run_id }}'
+        run: terraform plan -out='tfplan-${{ inputs.project_id }}-${{ github.run_id }}.out' > tfplan-${{ inputs.project_id }}-${{ github.run_id }}.txt
 
       - name: Terraform Apply
         run: terraform apply -auto-approve 
 
-      - name: Output terraform plan
-        if: steps.plan.outputs.stdout != ''
-        id: output_plan
-        run: echo "output_plan='${{ steps.plan.outputs.stdout }}'" >> $GITHUB_OUTPUT
-        shell: bash 
-
-      - name: Output terraform plan error
-        if: steps.plan.outputs.stderr != ''
-        id: output_plan_error
-        run: echo "output_plan_error='${{ steps.plan.outputs.stderr }}'" >> $GITHUB_OUTPUT
-        shell: bash  
+      - name: Upload Terraform plan output artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'tfplan-${{ inputs.project_id }}-${{ github.run_id }}.txt'
+          path: tfplan-${{ inputs.project_id }}-${{ github.run_id }}.txt   
 
       - name: Upload Terraform plan output artifact
         uses: actions/upload-artifact@v4

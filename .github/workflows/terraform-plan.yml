@@ -9,7 +9,7 @@ on:
       GCP_CREDENTIALS:
         required: true    
 jobs:
-  terraform:
+  exec-terraform-plan:
     runs-on: ubuntu-latest
     permissions:
       contents: read
