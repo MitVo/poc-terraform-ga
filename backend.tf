@@ -6,7 +6,7 @@ terraform {
     }
   }
   backend "gcs" {
-    bucket = "github-action-gcp-bucket"
+    bucket = "github-action-with-terraform"
     prefix = "githubAction"
   }
 }
