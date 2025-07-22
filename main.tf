@@ -4,4 +4,8 @@ resource "google_storage_bucket" "Cloud_function_bucket" {
   project                     = var.project_id
   force_destroy               = true
   uniform_bucket_level_access = true
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
