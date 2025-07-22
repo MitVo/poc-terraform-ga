@@ -39,7 +39,7 @@ jobs:
       - name: Configure GCP credentials
         run: |
           mkdir -p terraform
-          echo "GOOGLE_APPLICATION_CREDENTIALS=terraform/gcp-key.json"
+          echo "${{ secrets.GCP_CREDENTIALS }}" > terraform/gcp-key.json
           gcloud auth github-actions-terraform@terraform-gh.iam.gserviceaccount.com --key-file=terraform/gcp-key.json  
           gcloud config set project ${{ inputs.project_id }}
 
