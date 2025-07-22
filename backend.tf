@@ -5,8 +5,8 @@ terraform {
       version = "~> 5.38"
     }
   }
-  backend "gcp" {
-    bucket = "github-action-gcp-bucket"
+  backend "gcs" {
+    bucket = "github-action-with-terraform"
     prefix = "githubAction"
   }
 }

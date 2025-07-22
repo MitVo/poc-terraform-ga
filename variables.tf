@@ -1,10 +1,10 @@
-variables "project_id" {
+variable "project_id" {
   type    = string
   default = "terraform-gh"
 }
 
 variable "region" {
-  type  = string
+  type        = string
   description = "Region to create all resources in "
-  default   = "us-east1"
+  default     = "us-east1"
 }
