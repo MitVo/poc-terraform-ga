@@ -42,7 +42,7 @@ jobs:
         
       - name: Plan Terraform changes
         id: plan
-        run: terraform plan -out='tfplan-${{ inputs.project_id }}-${{ github.run_id }}.out' > tfplan-${{ inputs.project_id }}-${{ github.run_id }}.out
+        run: terraform plan -out=tfplan-${{ inputs.project_id }}-${{ github.run_id }}.out
 
       - name: Terraform Apply
         run: terraform apply tfplan-${{ inputs.project_id }}-${{ github.run_id }}.out
