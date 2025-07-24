@@ -10,3 +10,4 @@ jobs:
       GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
     with:
       project_id: "terraform-gh"
+      workspace: "default"
