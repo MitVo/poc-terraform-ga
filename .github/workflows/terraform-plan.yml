@@ -5,6 +5,9 @@ on:
       project_id:
         required: true
         type: string
+      workspace:
+        required: true
+        type: string  
     secrets:
       GCP_CREDENTIALS:
         required: true    
@@ -31,15 +34,18 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
+      - name: Terraform Workspace Select
+        run: terraform workspace select ${{ inputs.workspace }}   
+
       - name: Validate Terraform configuration
         run: terraform validate
         
       - name: Plan Terraform changes
         id: plan
-        run: terraform plan -out='tfplan-${{ inputs.project_id }}-${{ github.run_id }}.out' > tfplan-${{ inputs.project_id }}-${{ github.run_id }}.txt
+        run: terraform plan -out='tfplan-${{ inputs.project_id }}-${{ github.run_id }}.out' > tfplan-${{ inputs.project_id }}-${{ github.run_id }}.out
 
       - name: Upload Terraform plan output artifact
         uses: actions/upload-artifact@v4
         with:
-          name: 'tfplan-${{ inputs.project_id }}-${{ github.run_id }}.txt'
-          path: tfplan-${{ inputs.project_id }}-${{ github.run_id }}.txt  
+          name: 'tfplan-${{ inputs.project_id }}-${{ github.run_id }}.out'
+          path: tfplan-${{ inputs.project_id }}-${{ github.run_id }}.out  
